@@ -1,6 +1,11 @@
 function [varargout] = dp_removeoutliers(varargin)
 % [x] = dp_removeoutliers(x)
 % For 2D matrices will remove all columns if one outlier exists in column
+% Outliers are determined based on boxplot rule
+% Requires complete.m, dp_findoutliers.m
+% Output: If N is the number of inputs, the first N outputs 
+% are input arrays with outliers removed. Output N+1
+
 x = [];
 for vi = 1:length(varargin)
     x = [x varargin{vi}];
