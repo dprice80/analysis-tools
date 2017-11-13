@@ -8,6 +8,8 @@ if nargin == 1
     equalphase = true;
 end
 
+data = shiftdim(data);
+
 L = size(data, 1);
 
 data = fft(data)*2;
