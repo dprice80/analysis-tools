@@ -1,4 +1,4 @@
-function [varargout] = complete(varargin)
+function [varargout] = dp_complete(varargin)
 
 c = [];
 for ii = 1:length(varargin)
