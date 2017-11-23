@@ -1,4 +1,4 @@
-function [varargout] = complete_detrend(varargin)
+function [varargout] = dp_complete_detrend(varargin)
 
 c = [];
 for ii = 1:length(varargin)
