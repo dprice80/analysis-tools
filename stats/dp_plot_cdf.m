@@ -15,7 +15,7 @@ hold off
 [h, p, ks] = kstest(x_values);
 
 if p < 1e-3
-title(sprintf('KS Test ks=%f, h=%d, p=%e',ks, h, p))
+    title(sprintf('KS Test ks=%f, h=%d, p=%e',ks, h, p))
 else
-title(sprintf('KS Test ks=%f, h=%d, p=%2.3f',ks, h, p))
+    title(sprintf('KS Test ks=%f, h=%d, p=%2.3f',ks, h, p))
 end

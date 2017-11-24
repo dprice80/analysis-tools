@@ -60,7 +60,7 @@ lzdiffnull_sorted = sort(lzdiffnull);
 loc = find(abs(lzdiffreal) > abs(lzdiffnull_sorted), 1, 'last');
 
 if isempty(loc)
-    pval = 1-(1/N);
+    pval = 1-(1/N); % cannot have 0th percentiles (cannot convert to z score)
 else
     pval = 1-(loc/N);
 end
@@ -76,8 +76,10 @@ z_data2 = (calcpc(lz2, lz2r));
         loc = find(lzr >= sort(nulldist), 1, 'last');
         if isempty(loc)
             pc = 1/N;
-        else
+        elseif loc ~= N
             pc = loc/N;
+        else
+            pc = 1-(1/N); % can't have 100th percentiles in here (which cannot be converted to a z score)
         end
     end
 end
