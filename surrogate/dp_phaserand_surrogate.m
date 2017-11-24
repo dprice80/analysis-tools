@@ -41,7 +41,7 @@ if clipdata
 end
 
     function rp = generate_shifts(L)
-        r = exp(1i*randn(1,(L-1)/2)*2*pi); % uses the same phase for each channel
-        rp = [0 r conj(r((L-1)/2:-1:1))]';
+        r = exp(1i*randn(1,(L-1)/2)*2*pi);
+        rp = [0 r conj(r(end:-1:1))]';
     end
 end
