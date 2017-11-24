@@ -1,4 +1,4 @@
-function [lzdiffreal, lzdiffnull_sorted, pval, z_diff, z_data1, z_data2, lz1, lz2] = dp_lz_stats(data1, data2, N)
+function [lzdiffreal, lzdiffnull_sorted, pval, z_diff, z_data1, z_data2, lz1, lz2] = dp_lz_stats(data1, data2, N, conversionfun)
 % [lzdiffreal, lzdiffnull, p, pc] = dp_lz_stats(data1, data2, N)
 % 
 % INPUT
@@ -28,20 +28,15 @@ function [lzdiffreal, lzdiffnull_sorted, pval, z_diff, z_data1, z_data2, lz1, lz
 % histogram(lz2)
 % line([l l], [0 300],'Color','r')
 
-
-% Get data lengths
-N1 = length(data1);
-N2 = length(data2);
-
-% Make lengths even (for phase rand script)
-data1 = data1(1:floor(N1/2)*2);
-data2 = data2(1:floor(N2/2)*2);
-
 % Null distribution
 lzdiffnull = zeros(1,N);
 
-lz1r = lzwnormalised(sprintf('%d', heaviside(zscore(abs(hilbert(data1))))),0);
-lz2r = lzwnormalised(sprintf('%d', heaviside(zscore(abs(hilbert(data2))))),0);
+if nargin == 3
+    conversionfun = @(x) heaviside(zscore(abs(hilbert(x))));
+end
+
+lz1r = lzwnormalised(sprintf('%d', conversionfun(data1)),0);
+lz2r = lzwnormalised(sprintf('%d', conversionfun(data2)),0);
 
 lzdiffreal = lz2r - lz1r;
 
@@ -65,22 +60,22 @@ lzdiffnull_sorted = sort(lzdiffnull);
 loc = find(abs(lzdiffreal) > abs(lzdiffnull_sorted), 1, 'last');
 
 if isempty(loc)
-    pval = 1;
+    pval = 1-(1/N);
 else
     pval = 1-(loc/N);
 end
 
 % Calculate percentiles
 
-z_diff = norminv(calcpc(lzdiffnull_sorted, lzdiffreal));
-z_data1 = norminv(calcpc(lz1, lz1r));
-z_data2 = norminv(calcpc(lz2, lz2r));
+z_diff = (calcpc(lzdiffnull_sorted, lzdiffreal));
+z_data1 = (calcpc(lz1, lz1r));
+z_data2 = (calcpc(lz2, lz2r));
 
     function pc = calcpc(nulldist, lzr)
         N = length(nulldist);
         loc = find(lzr >= sort(nulldist), 1, 'last');
         if isempty(loc)
-            pc = 0;
+            pc = 1/N;
         else
             pc = loc/N;
         end

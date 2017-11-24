@@ -11,19 +11,13 @@ end
 
 data = shiftdim(data);
 
-if mod(size(data,1),2) == 0
-    % Add the first point to the end. If the data is periodic, this should
-    % be the correct extrapolation
-    clipdata = true;
-    data(end+1,:) = data(1,:);
-else
-    clipdata = false;
-end
-
 L = size(data, 1);
 
+if mod(L,2) == 0
+   error('size(data,1) should be odd')
+end
+
 data = fft(data);
-% data(L/2+1:end, :) = 0;
 
 if equalphase == true
     randphase = generate_shifts(L);
@@ -34,10 +28,6 @@ for ii = 1:size(data,2)
         randphase = generate_shifts(L);
     end
     data(:,ii) = real(ifft(data(:,ii).*randphase));
-end
-
-if clipdata
-    data = data(1:end-1,:);
 end
 
     function rp = generate_shifts(L)
