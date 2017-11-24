@@ -1,4 +1,4 @@
-function [lzdiffreal, lzdiffnull_sorted, pval, pc_diff, pc_data1, pc_data2, lz1, lz2] = dp_lz_stats(data1, data2, N)
+function [lzdiffreal, lzdiffnull_sorted, pval, z_diff, z_data1, z_data2, lz1, lz2] = dp_lz_stats(data1, data2, N)
 % [lzdiffreal, lzdiffnull, p, pc] = dp_lz_stats(data1, data2, N)
 % 
 % INPUT
@@ -72,9 +72,9 @@ end
 
 % Calculate percentiles
 
-pc_diff = calcpc(lzdiffnull_sorted, lzdiffreal);
-pc_data1 = calcpc(lz1, lz1r);
-pc_data2 = calcpc(lz2, lz2r);
+z_diff = norminv(calcpc(lzdiffnull_sorted, lzdiffreal));
+z_data1 = norminv(calcpc(lz1, lz1r));
+z_data2 = norminv(calcpc(lz2, lz2r));
 
     function pc = calcpc(nulldist, lzr)
         N = length(nulldist);
