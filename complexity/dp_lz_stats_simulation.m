@@ -30,15 +30,39 @@ line([l l], [0 300],'Color','r')
 
 
 
-%% Test whether percentiles are biased (they should be normally distributed over multiple simulated subjects).
+%% Test whether percentiles are biased (same freq bands) (they should be normally distributed over multiple simulated subjects).
 
-for subi = 1:1000
+clear pc_diff
+parfor subi = 1:1000
     disp(subi)
-    data1 = ft_preproc_bandpassfilter(rand(1,1000), 100, [10 20]);
-    data2 = ft_preproc_bandpassfilter(rand(1,1000), 100, [15 30]);
+    data1 = ft_preproc_bandpassfilter(rand(1,10000), 1000, [10 20]);
+    data2 = ft_preproc_bandpassfilter(rand(1,10000), 1000, [10 20]);
     
     % Run dp_lz_stats.m
-    [lzdiffreal, lzdiffnull_sorted, pval, pc_diff(subi), pc_data1, pc_data2, lz1, lz2] = dp_lz_stats(data1, data2, 1000);
-    
+    [lzdiffreal, lzdiffnull_sorted, pval, pc_diff(subi), pc_data1, pc_data2, lz1, lz2] = dp_lz_stats(data1, data2, 100);
 end
+
+histogram(pc_diff)
+
+data1r = dp_phaserand_surrogate(data1);
+
+figure
+plot(abs(fft(data1r)),'b')
+hold on
+plot(abs(fft(data1)),'r--')
+hold off
+
+%% Same as above, with different frequency bands
+
+clear pc_diff
+parfor subi = 1:1000
+    disp(subi)
+    data1 = ft_preproc_bandpassfilter(rand(1,1000), 100, [10 20]);
+    data2 = ft_preproc_bandpassfilter(rand(1,1000), 100, [20 40]);
+    
+    % Run dp_lz_stats.m
+    [lzdiffreal, lzdiffnull_sorted, pval, pc_diff(subi), pc_data1, pc_data2, lz1, lz2] = dp_lz_stats(data1, data2, 100);
+end
+
+histogram(pc_diff)
 
