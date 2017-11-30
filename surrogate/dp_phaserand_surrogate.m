@@ -5,6 +5,7 @@ function data = dp_phaserand_surrogate(data, equalphase)
 % has no effect on single channel randomisation
 % Dont forget to set your random seed if you want repeatable results
 % Based on Prichard and Theiler (1994) https://doi.org/10.1103/PhysRevLett.73.951
+% Darren Price, CBU, University of Cambridge (2017)
 
 if nargin == 1
     equalphase = true;
