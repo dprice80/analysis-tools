@@ -13,10 +13,6 @@ data = shiftdim(data);
 
 L = size(data, 1);
 
-if mod(L,2) == 0
-   error('size(data,1) should be odd')
-end
-
 data = fft(data);
 
 if equalphase == true
@@ -27,11 +23,17 @@ for ii = 1:size(data,2)
     if equalphase == false
         randphase = generate_shifts(L);
     end
-    data(:,ii) = real(ifft(data(:,ii).*randphase));
+    data(:,ii) = (ifft(data(:,ii).*randphase));
 end
 
     function rp = generate_shifts(L)
-        r = exp(1i*randn(1,(L-1)/2)*2*pi);
-        rp = [0 r conj(r(end:-1:1))]';
+        if mod(L,2) == 1
+            r = exp(1i*rand(1,(L-1)/2)*2*pi);
+            rp = [1+0i r conj(r(end:-1:1))]';
+        else
+            r = exp(-1i.*rand(1,L/2)*2*pi);
+            rp = [conj(r(L/2:-1:1)) r]';
+            rp(1) = 1 + 0i;
+        end
     end
 end
