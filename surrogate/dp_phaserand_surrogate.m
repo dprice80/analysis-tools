@@ -25,7 +25,7 @@ for ii = 1:size(data,2)
     if equalphase == false
         randphase = generate_shifts(L);
     end
-    data(:,ii) = (ifft(data(:,ii).*randphase));
+    data(:,ii) = real(ifft(data(:,ii).*randphase));
 end
 
     function rp = generate_shifts(L)
