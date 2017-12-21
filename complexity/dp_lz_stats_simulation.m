@@ -53,6 +53,8 @@ line([l l], [0 300],'Color','r')
 
 %% Check distributions of outputs (same freq bands).
 
+dp_matlabpool_start(50)
+
 clear pc_* z_*
 parfor subi = 1:250
     disp(subi)
