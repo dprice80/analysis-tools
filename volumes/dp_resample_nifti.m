@@ -1,4 +1,4 @@
-function NIIds = dp_downsample_nifti(nifti_fn, ds)
+function NIIds = dp_resample_nifti(nifti_fn, ds)
 % Requires nifti toolbox
 % ds = either a) downsample rate (scalar). original / new resolution;
 %    or b) filename of a reference volume for resampling. The reference volume 
