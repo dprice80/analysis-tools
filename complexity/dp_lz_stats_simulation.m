@@ -4,6 +4,7 @@ clc
 
 addpath(genpath('/imaging/dp01/toolboxes/analysis-tools-git/'))
 
+
 %% Test phase randomisation script
 data1 = ft_preproc_bandpassfilter(rand(1,1000001), 1000, [10 20])';
 data1r = dp_phaserand_surrogate(data1);

@@ -18,6 +18,13 @@ if ischar(ds)
     NIIds.img = single(NIIds.img);
     NIIds.hdr.dime.bitpix = 16;
     NIIds.img = interpn(m1x, m1y, m1z, single(NII1mm.img), mrx, mry, mrz);
+    
+elseif isstruct(ds)
+    NIIds = ds; clear ds
+    [mrx, mry, mrz] = get_grids(NIIds);
+    NIIds.img = single(NIIds.img);
+    NIIds.hdr.dime.bitpix = 16;
+    NIIds.img = interpn(m1x, m1y, m1z, single(NII1mm.img), mrx, mry, mrz);
 else
     sz = size(NII1mm.img)/ds;
 
