@@ -5,7 +5,8 @@ Lt = 120;
 fs = 1000;
 L = Lt*fs;
 t = linspace(0,Lt,Lt*fs);
-scaling2 = 1.4; % how much to scale segment 2
+scaling2 = 3; % how much to scale segment 2
+Nrand = 10000;
 
 x1 = randn(1,fs*Lt);
 x2 = randn(1,fs*Lt);
@@ -27,7 +28,7 @@ x12h = abs(hilbert(x12));
 a1 = mean(x12h(1:L/2)); % first half 
 a2 = mean(x12h(L/2+1:L)); % second half
 
-Nrand = 10000;
+
 
 a1r = zeros(1,Nrand);
 a2r = zeros(1,Nrand);
@@ -55,10 +56,10 @@ adrs = sort(adr);
 
 % Calculate p value thresholds
 % Upper threshold is easy (but we need to make 2 tailed by dividing by two)
-pthresh_upper = quantile(adr, [1-0.05/2 1-0.01/2 1-0.001/2])
+pthresh_upper = quantile(adr, [1-0.05/2 1-0.01/2 1-0.001/2]);
 
 % Lower threshold is the inverse of the upper threshold
-pthresh_lower = quantile(adr, [0.05/2 0.01/2 0.001/2])
+pthresh_lower = quantile(adr, [0.05/2 0.01/2 0.001/2]);
 
 hold on 
 ylim = get(gca, 'YLim');
@@ -69,10 +70,41 @@ line([th; th], repmat(ylim,6,1)')
 % pv should be [0.05 0.01 0.001] in both cases
 % pcv should be [0.9750 0.9950 0.9995] or [0.0250 0.0050 0.0005]
 % z should be +/-[1.9600 2.5758 3.2905]
-[pcv, pv, z] = dp_calc_percentile(adrs, pthresh_upper, 'twotailed')
+[pcv, pv, ~] = dp_calc_percentile(adrs, pthresh_upper, 'twotailed');
 
-[pcv, pv, z] = dp_calc_percentile(adrs, pthresh_lower, 'twotailed')
+if ~all((abs(pv) - [0.05 0.01 0.001]) < 1/Nrand)
+    error('pthresh_upper p values do not match')
+else
+    disp('pthresh_upper p value test passed')
+end
 
+if any((pcv - (1-[0.05/2 0.01/2 0.001/2])) ~= 0)
+    error('pthresh_upper pc values do not match')
+else
+    disp('pthresh_upper pc value test passed')
+end
 
+[pcv, pv, ~] = dp_calc_percentile(adrs, pthresh_lower, 'twotailed');
 
+if ~all((abs(pv) - [0.05 0.01 0.001]) < 1/Nrand)
+    error('pthresh_lower p values do not match')
+else
+    disp('pthresh_lower p value test passed')
+end
+
+if any((pcv - [0.05/2 0.01/2 0.001/2]) ~= 0)
+    error('pthresh_lower pc values do not match')
+else
+    disp('pthresh_lower pc value test passed')
+end
+
+[~, ~, z] = dp_calc_percentile(adrs, adrs, 'twotailed');
+% Compute Kolmogorov-Smirnov test of normality on z scores.
+[h, ks_pval, ks_stat, ks_critical_val] = kstest(z);
+
+if h 
+    error('kstest failed. Null z scores are not normally distributed')
+else
+    disp('kstest passed. Null Z scores are normally distributed')
+end
 

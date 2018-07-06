@@ -1,4 +1,4 @@
-function NIIds = dp_resample_nifti(nifti_fn, ds)
+function NIIds = dp_resample_nifti_untouch(nifti_fn, ds, interpmethod)
 % Requires nifti toolbox
 % ds = either a) downsample rate (scalar). original / new resolution;
 %    or b) filename of a reference volume for resampling. The reference volume 
@@ -9,8 +9,12 @@ function NIIds = dp_resample_nifti(nifti_fn, ds)
 % This tool can also be used to upsample by making ds < 1
 % Darren Price - MRC CBU, Cambridge University, UK 2018
 
+if nargin < 3
+    interpmethod = 'linear';
+end
+
 if ischar(nifti_fn)
-    NIIhires = mni2fs_load_affine(reslice_return_nii(nifti_fn));
+    NIIhires = mni2fs_load_nii(nifti_fn);
 else
     NIIhires = nifti_fn;
 end
@@ -21,11 +25,11 @@ Thires = NIIhires.transform;
 
 if ischar(ds)
     % Using ds as the output so no need to change any header information.
-    NIIds = mni2fs_load_affine(reslice_return_nii(ds));
+    NIIds = mni2fs_load_nii(ds);
     [mrx, mry, mrz] = get_grids(NIIds);
     NIIds.img = single(NIIds.img);
     NIIds.hdr.dime.bitpix = 16;
-    NIIds.img = interpn(m1x, m1y, m1z, single(NIIhires.img), mrx, mry, mrz);
+    NIIds.img = interpn(m1x, m1y, m1z, single(NIIhires.img), mrx, mry, mrz, interpmethod);
     
 elseif isstruct(ds)
     % Using ds as the output so no need to change any header information.
@@ -33,7 +37,7 @@ elseif isstruct(ds)
     [mrx, mry, mrz] = get_grids(NIIds);
     NIIds.img = single(NIIds.img);
     NIIds.hdr.dime.bitpix = 16;
-    NIIds.img = interpn(m1x, m1y, m1z, single(NIIhires.img), mrx, mry, mrz);
+    NIIds.img = interpn(m1x, m1y, m1z, single(NIIhires.img), mrx, mry, mrz, interpmethod);
     
 elseif isnumeric(ds) % then its a number
     sz = round(size(NIIhires.img)/ds);
@@ -51,7 +55,7 @@ elseif isnumeric(ds) % then its a number
     NIIds = NIIhires;
     
     NIIds.img = interpn(m1x, m1y, m1z,...
-        single(NIIhires.img), reshape(mdxyz(:,1),dsf), reshape(mdxyz(:,2),dsf), reshape(mdxyz(:,3),dsf));
+        single(NIIhires.img), reshape(mdxyz(:,1),dsf), reshape(mdxyz(:,2),dsf), reshape(mdxyz(:,3),dsf), interpmethod);
     
     NIIds.hdr.hist.srow_x = Td(1,:);
     NIIds.hdr.hist.srow_y = Td(2,:);
