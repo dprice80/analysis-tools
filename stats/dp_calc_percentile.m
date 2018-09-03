@@ -36,7 +36,7 @@ nulldist = sort(nulldist);
 Nel = numel(x);
 
 for ii = 1:Nel
-    printProgress(ii, Nel, false, 'Percentiles')
+    printProgress(ii, Nel, false)
     
     loc = find(x(ii) >= nulldist, 1, 'last');
     
